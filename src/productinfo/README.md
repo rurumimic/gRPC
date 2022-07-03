@@ -2,6 +2,11 @@
 
 - [ProductInfo Service and Client](https://github.com/grpc-up-and-running/samples/tree/master/ch02)
 
+## languages
+
+- [go](go/README.md)
+- [python](python/README.md)
+
 ## protobuf
 
 - [proto/product_info.proto](proto/product_info.proto)
@@ -55,7 +60,6 @@ service ProductInfo {
 option go_package = "./ecommerce";
 ```
 
-
 ### (example) import proto
 
 ```proto
@@ -66,157 +70,77 @@ import "google/protobuf/wrappers.proto";
 package ecommerce;
 ```
 
-### compile proto
-
-#### Server
-
-in `./productinfo`:
-
-```bash
-protoc -I proto \
-       proto/product_info.proto \
-       --go_out=go/server \
-       --go-grpc_out=go/server
-```
-
-OR
-
-in `./productinfo/go/server`:
-
-```bash
-protoc -I ../../proto \
-       ../../proto/product_info.proto \
-       --go_out=. \
-       --go-grpc_out=.
-```
-
-#### Client
-
-in `./productinfo`:
-
-```bash
-protoc -I proto \
-       proto/product_info.proto \
-       --go_out=go/client \
-       --go-grpc_out=go/client
-```
-
-#### output
-
-- [go/server/ecommerce/product_info.pb.go](go/server/ecommerce/product_info.pb.go)
-- [go/server/ecommerce/product_info_grpc.pb.go](go/server/ecommerce/product_info_grpc.pb.go)
-
-```bash
-productinfo
-├── go
-│   ├── client
-│   │   └── ecommerce
-│   │       ├── product_info.pb.go
-│   │       └── product_info_grpc.pb.go
-│   └── server
-│       └── ecommerce
-│           ├── product_info.pb.go
-│           └── product_info_grpc.pb.go
-└── proto
-    └── product_info.proto
-```
-
 ---
 
-## Stub
+## Mix
 
-### Server
+### Go Server + Python Client
 
-- [go/server/README](go/server/README.md)
-
-```bash
-productinfo/go/server
-├── README.md
-├── ecommerce # stub files
-│   ├── product_info.pb.go
-│   └── product_info_grpc.pb.go
-├── go.mod
-├── go.sum
-└── main.go
-```
-
-### Client
-
-- [go/client/README](go/client/README.md)
-
-```bash
-productinfo/go/client
-├── README.md
-├── ecommerce # stub files
-│   ├── product_info.pb.go
-│   └── product_info_grpc.pb.go
-├── go.mod
-├── go.sum
-└── main.go
-```
-
----
-
-## Build
-
-### Build Server
-
-```bash
-cd ./productinfo/go/server
-go build -v -o bin/server
-```
-
-#### output
-
-```bash
-productinfo/go/server
-└── bin
-   └── server
-```
-
-### Build Client
-
-```bash
-cd ./productinfo/go/client
-go build -v -o bin/client
-```
-
-```bash
-productinfo/go/client
-└── bin
-    └── client
-```
-
----
-
-## Run
-
-### Run Server
+#### Go Server
 
 ```bash
 cd ./productinfo/go/server
 bin/server
 ```
 
-### Run Client
+```bash
+2022/07/03 23:59:48 Product f20d7937-6e30-450f-b239-590cd070b299 : Apple iPhone 11 - Added.
+2022/07/03 23:59:48 Product f20d7937-6e30-450f-b239-590cd070b299 : Apple iPhone 11 - Retrieved.
+```
+
+#### Python Client
+
+```bash
+cd ./productinfo/python/client
+python client.py
+```
+
+```bash
+add product: response value: "f20d7937-6e30-450f-b239-590cd070b299"
+
+get product: response id: "f20d7937-6e30-450f-b239-590cd070b299"
+name: "Apple iPhone 11"
+description: "Meet Apple iPhone 11. All-new dual-camera system with Ultra Wide and Night mode."
+price: 699.0
+```
+
+### Python Server + Go Client
+
+#### Python Server
+
+```bash
+cd ./productinfo/python/server
+python server.py
+```
+
+```bash
+Starting server. Listening on port 50051.
+```
+
+```bash
+addProduct:request id: "4cc9c0a4-fae1-11ec-a6f0-8c85907c063a"
+name: "Apple iPhone 11"
+description: "Meet Apple iPhone 11. All-new dual-camera system with Ultra Wide and Night mode."
+price: 699.0
+
+addProduct:response value: "4cc9c0a4-fae1-11ec-a6f0-8c85907c063a"
+
+getProduct:request value: "4cc9c0a4-fae1-11ec-a6f0-8c85907c063a"
+
+getProduct:response id: "4cc9c0a4-fae1-11ec-a6f0-8c85907c063a"
+name: "Apple iPhone 11"
+description: "Meet Apple iPhone 11. All-new dual-camera system with Ultra Wide and Night mode."
+price: 699.0
+```
+
+#### Go Client
 
 ```bash
 cd ./productinfo/go/client
 bin/client
 ```
 
-### output
-
 ```bash
-# bin/server
-
-2022/07/03 17:46:23 Product c15194bc-66b4-4d01-9355-61ebca00695d : Apple iPhone 11 - Added.
-2022/07/03 17:46:23 Product c15194bc-66b4-4d01-9355-61ebca00695d : Apple iPhone 11 - Retrieved.
-```
-
-```bash
-# bin/client
-
-2022/07/03 17:46:23 Product ID: c15194bc-66b4-4d01-9355-61ebca00695d added successfully
-2022/07/03 17:46:23 Product: id:"c15194bc-66b4-4d01-9355-61ebca00695d" name:"Apple iPhone 11" description:"Meet Apple iPhone 11. All-new dual-camera system with Ultra Wide and Night mode." price:699
+2022/07/04 00:03:30 Product ID: 4cc9c0a4-fae1-11ec-a6f0-8c85907c063a added successfully
+2022/07/04 00:03:30 Product: id:"4cc9c0a4-fae1-11ec-a6f0-8c85907c063a" name:"Apple iPhone 11" description:"Meet Apple iPhone 11. All-new dual-camera system with Ultra Wide and Night mode." price:699
 ```

@@ -4,6 +4,7 @@
   - [documentation](https://grpc.io/docs/)
   - [introduction](https://grpc.io/docs/what-is-grpc/introduction/)
   - quickstart: [golang](https://grpc.io/docs/languages/go/quickstart/)
+  - [status codes](https://grpc.github.io/grpc/core/md_doc_statuscodes.html)
 - github: [grpc/grpc-go](https://github.com/grpc/grpc-go)
 - protocol buffers: [google doc](https://developers.google.com/protocol-buffers)
 
@@ -13,6 +14,7 @@
   - [github](https://github.com/grpc-up-and-running)
     - [content](https://github.com/grpc-up-and-running/grpc-up-and-running.github.io)
     - [sampels](https://github.com/grpc-up-and-running/samples)
+- Microsoft: [gRPC](https://docs.microsoft.com/en-us/dotnet/architecture/cloud-native/grpc)
 
 ---
 
@@ -48,4 +50,15 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 export PATH="$PATH:$(go env GOPATH)/bin"
 
 echo $PATH | grep -E "$(go env GOPATH)/bin"
+```
+
+### Python
+
+- Python 3.5+
+- pip 9.0.1+
+
+```bash
+pip install --upgrade pip
+pip install grpcio
+pip install grpcio-tools
 ```
