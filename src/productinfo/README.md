@@ -74,6 +74,8 @@ package ecommerce;
 
 ## Mix
 
+![](https://grpc.io/img/landing-2.svg)
+
 ### Go Server + Python Client
 
 #### Go Server
