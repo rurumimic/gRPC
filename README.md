@@ -13,7 +13,7 @@
 - book: [gRPC - Up and Running](https://grpc-up-and-running.github.io/)
   - [github](https://github.com/grpc-up-and-running)
     - [content](https://github.com/grpc-up-and-running/grpc-up-and-running.github.io)
-    - [sampels](https://github.com/grpc-up-and-running/samples)
+    - [samples](https://github.com/grpc-up-and-running/samples)
   - oreilly: [ch01](https://www.oreilly.com/library/view/grpc-up-and/9781492058328/ch01.html)
 - Microsoft: [gRPC](https://docs.microsoft.com/en-us/dotnet/architecture/cloud-native/grpc)
 
