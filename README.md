@@ -25,6 +25,16 @@ Read [Documentation](docs/README.md)
 
 ## Install
 
+### Protobuf
+
+- vscode plugins
+  - [vscode-proto3](https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3)
+  - [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
+
+```bash
+brew install clang-format
+```
+
 ### Go
 
 - Go

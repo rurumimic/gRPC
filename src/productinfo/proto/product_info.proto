@@ -5,8 +5,8 @@ package ecommerce;
 option go_package = "./ecommerce";
 
 service ProductInfo {
-    rpc addProduct(Product) returns (ProductID);
-    rpc getProduct(ProductID) returns (Product);
+  rpc addProduct(Product) returns (ProductID);
+  rpc getProduct(ProductID) returns (Product);
 }
 
 message ProductID {

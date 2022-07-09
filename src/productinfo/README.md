@@ -60,16 +60,6 @@ service ProductInfo {
 option go_package = "./ecommerce";
 ```
 
-### (example) import proto
-
-```proto
-syntax = "proto3";
-
-import "google/protobuf/wrappers.proto";
-
-package ecommerce;
-```
-
 ---
 
 ## Mix

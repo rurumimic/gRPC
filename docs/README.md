@@ -12,5 +12,9 @@
   - Create go modules: server, client
   - Write and compile a protobuf for go interface
   - Build and run server and client
-- gRPC [patterns](patterns.md)
+- gRPC [patterns](patterns.md): [Order Service](../src/orderservice/README.md)
+  - Unary RPC
+  - Server streaming RPC
+  - Client streaming RPC
+  - Bidirectional streaming RPC
 - [microservices architecture](microservices.md)

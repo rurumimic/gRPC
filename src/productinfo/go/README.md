@@ -4,7 +4,7 @@
 
 ---
 
-## compile proto
+## Compile Proto
 
 ### Server
 
@@ -39,7 +39,7 @@ protoc -I proto \
        --go-grpc_out=go/client
 ```
 
-### output
+### Output
 
 - [server/ecommerce/product_info.pb.go](server/ecommerce/product_info.pb.go)
 - [server/ecommerce/product_info_grpc.pb.go](server/ecommerce/product_info_grpc.pb.go)
@@ -106,7 +106,7 @@ cd ./productinfo/go/server
 go build -v -o bin/server
 ```
 
-#### output
+#### Output
 
 ```bash
 productinfo/go/server
@@ -145,7 +145,7 @@ cd ./productinfo/go/client
 bin/client
 ```
 
-### output
+### Output
 
 ```bash
 # bin/server
