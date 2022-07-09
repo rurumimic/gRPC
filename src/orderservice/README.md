@@ -8,7 +8,7 @@
 
 ## protobuf
 
-- [proto/]
+- [proto/order_management.proto](proto/order_management.proto)
 
 ### Well-known Types
 
