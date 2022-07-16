@@ -43,10 +43,47 @@ brew install clang-format
   - [gvm](https://github.com/moovweb/gvm)
 - Protocol buffer 3+
   - [install](https://grpc.io/docs/protoc-installation/)
+  
+#### Install Protoc
+
+##### MacPort
+
+```bash
+sudo port install protobuf3-cpp
+```
+
+##### HomeBrew
+
+```bash
+brew install protobuf
+```
+
+##### Manually
+
+- [protocolbuffers/protobuf](https://github.com/protocolbuffers/protobuf)
+   - [release](https://github.com/protocolbuffers/protobuf/releases/latest)
+
+Download pre-built binary: `protoc-XX.X-osx-x86_64.zip`
+
+```bash
+sudo mv protoc-XX/ /usr/local
+sudo cp -R protoc-XX/include /usr/local/include
+sudo chmod u+x /usr/local/protoc-XX/bin/protoc
+sudo xattr -d com.apple.quarantine /usr/local/protoc-XX/bin/protoc
+```
+
+Add `PATH` in `.zprofile`:
+
+```bash
+### Protobuf
+export PATH="$PATH:/usr/local/protoc-XX/bin"
+```
+
+#### Version
 
 ```bash
 go version # go version go1.18 darwin/amd64
-protoc --version # libprotoc 3.19.4
+protoc --version # libprotoc 3.21.2
 ```
 
 ### Go plugins for the protocol compiler
