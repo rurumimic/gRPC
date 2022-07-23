@@ -174,12 +174,82 @@ func StreamInterceptor(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.Clie
 
 ## Deadline
 
+- grpc: [gRPC and Deadlines](https://grpc.io/blog/deadlines/)
 
+Error: `DEADLINE_EXCEEDED`
+
+[Setting a deadline](https://grpc.io/blog/deadlines/#setting-a-deadline):
+
+```go
+clientDeadline := time.Now().Add(time.Duration(*deadlineMs) * time.Millisecond)
+ctx, cancel := context.WithDeadline(ctx, clientDeadline)
+```
+
+[Checking deadlines](https://grpc.io/blog/deadlines/#checking-deadlines):
+
+```go
+if ctx.Err() == context.Canceled {
+	return status.New(codes.Canceled, "Client cancelled, abandoning.")
+}
+```
+
+[Adjusting deadlines](https://grpc.io/blog/deadlines/#adjusting-deadlines):
+
+```go
+var deadlineMs = flag.Int("deadline_ms", 20*1000, "Default deadline in milliseconds.")
+
+ctx, cancel := context.WithTimeout(ctx, time.Duration(*deadlineMs) * time.Millisecond)
+```
+
+### Example
+
+- server: [orderservice / server / main.go](/src/orderservice/go/server/main.go)
+- client: [orderservice / client / main.go](/src/orderservice/go/client/main.go)
+
+#### Server
+
+```go
+if ctx.Err() == context.DeadlineExceeded {
+  log.Printf("RPC has reached deadline exceeded state : %s", ctx.Err())
+  return nil, ctx.Err()
+}
+```
+
+#### Client
+
+```go
+clientDeadline := time.Now().Add(time.Duration(2 * time.Second))
+ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+defer cancel()
+```
 
 ---
 
 ## Cancellation
 
+### Example
+
+#### Server
+
+```go
+if stream.Context().Err() == context.Canceled {
+	log.Printf(" Context Cacelled for this stream: -> %s", stream.Context().Err())
+	log.Printf("Stopped processing any more order of this stream!")
+	return stream.Context().Err()
+}
+```
+
+#### Client
+
+```go
+ctx, cancel := context.WithCancel(context.Background())
+defer cancel()
+```
+
+```go
+cancel()
+log.Printf("RPC Status : %s", ctx.Err())
+```
 
 ---
 

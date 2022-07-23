@@ -36,6 +36,17 @@ type server struct {
 
 // Simple RPC
 func (s *server) AddOrder(ctx context.Context, orderReq *pb.Order) (*wrapper.StringValue, error) {
+
+	/* Deadlines
+	sleepDuration := 5
+	log.Println("Sleeping for: ", sleepDuration, "s")
+	time.Sleep(time.Duration(sleepDuration) * time.Second)
+	if ctx.Err() == context.DeadlineExceeded {
+		log.Printf("RPC has reached deadline exceeded state : %s", ctx.Err())
+		return nil, ctx.Err()
+	}
+	*/
+
 	log.Printf("Order Added. ID : %v", orderReq.Id)
 	orderMap[orderReq.Id] = *orderReq
 	return &wrapper.StringValue{Value: "Order Added: " + orderReq.Id}, nil
@@ -99,8 +110,23 @@ func (s *server) UpdateOrders(stream pb.OrderManagement_UpdateOrdersServer) erro
 func (s *server) ProcessOrders(stream pb.OrderManagement_ProcessOrdersServer) error {
 
 	batchMarker := 1
+
+	/* Cancellation from server side
+	_, cancel := context.WithCancel(stream.Context())
+	cancel()
+	*/
+
 	var combinedShipmentMap = make(map[string]pb.CombinedShipment)
 	for {
+
+		/* Cancellation
+		 */
+		if stream.Context().Err() == context.Canceled {
+			log.Printf(" Context Cacelled for this stream: -> %s", stream.Context().Err())
+			log.Printf("Stopped processing any more order of this stream!")
+			return stream.Context().Err()
+		}
+
 		orderId, err := stream.Recv()
 		log.Printf("Reading Proc order : %s", orderId)
 		if err == io.EOF {

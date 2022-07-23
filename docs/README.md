@@ -27,14 +27,14 @@
   - [Interceptors](advanced.md#interceptors)
     - server/client 
     - unary/stream interceptor
-  - Deadline
-  - Cancellation
-  - Compression
-  - Keepalive
-  - Metadata
-  - Error Handling
-  - Load Balancing
-  - Multiplexing
+  - [Deadline](advanced.md#deadline)
+  - [Cancellation](advanced.md#cancellation)
+  - [Compression](advanced.md#compression)
+  - [Keepalive](advanced.md#keepalive)
+  - [Metadata](advanced.md#metadata)
+  - [Error Handling](advanced.md#error-handling)
+  - [Load Balancing](advanced.md#load-balancing)
+  - [Multiplexing](advanced.md#multiplexing)
 - Secure
 - Production
 - Ecosystem

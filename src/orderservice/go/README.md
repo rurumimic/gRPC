@@ -120,24 +120,9 @@ bin/main
 2022/07/09 20:45:47 Order Added. ID : 101
 ```
 
-add interceptor:
-
-```bash
-2022/07/23 14:56:26 ======= [Server Interceptor]  /ecommerce.OrderManagement/addOrder
-2022/07/23 14:56:26  Pre Proc Message : id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
-2022/07/23 14:56:26 Order Added. ID : 101
-2022/07/23 14:56:26  Post Proc Message : id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
-```
-
 #### GetOrder: Unary
 
-add interceptor
-
-```bash
-2022/07/23 14:56:26 ======= [Server Interceptor]  /ecommerce.OrderManagement/getOrder
-2022/07/23 14:56:26  Pre Proc Message : value:"106"
-2022/07/23 14:56:26  Post Proc Message : value:"106"
-```
+pass
 
 #### SearchOrders 'Google': Server Streaming
 
@@ -160,7 +145,92 @@ add interceptor
 2022/07/09 20:45:47 Mac Book Pro
 ```
 
-add interceptor:
+#### UpdateOrders: Client Streaming
+
+```bash
+2022/07/09 20:45:47 Order ID : 102 - Updated
+2022/07/09 20:45:47 Order ID : 103 - Updated
+2022/07/09 20:45:47 Order ID : 104 - Updated
+```
+
+#### ProcessOrders: Bi directional Streaming
+
+```bash
+2022/07/09 20:45:47 Reading Proc order : value:"102"
+2022/07/09 20:45:47 1cmb - Mountain View, CA
+2022/07/09 20:45:47 Reading Proc order : value:"103"
+2022/07/09 20:45:47 1cmb - San Jose, CA
+2022/07/09 20:45:47 Reading Proc order : value:"104"
+2022/07/09 20:45:47 Shipping : cmb - Mountain View, CA -> 2
+2022/07/09 20:45:47 Shipping : cmb - San Jose, CA -> 1
+2022/07/09 20:45:48 Reading Proc order : value:"101"
+2022/07/09 20:45:48 1cmb - San Jose, CA
+2022/07/09 20:45:48 Reading Proc order : <nil>
+2022/07/09 20:45:48 EOF : <nil>
+```
+
+### Client
+
+#### AddOrder 101: Unary
+
+```bash
+2022/07/09 20:45:36 AddOrder Response -> Order Added: 101
+```
+
+#### GetOrder 106: Unary
+
+```bash
+2022/07/09 20:45:36 GetOrder Response -> : id:"106" items:"Amazon Echo" items:"Apple iPhone XS" price:300 destination:"Mountain View, CA"
+```
+
+#### SearchOrders 'Google': Server Streaming
+
+```bash
+2022/07/09 20:45:36 Search Result : id:"102" items:"Google Pixel 3A" items:"Mac Book Pro" price:1800 destination:"Mountain View, CA"
+2022/07/09 20:45:36 Search Result : id:"104" items:"Google Home Mini" items:"Google Nest Hub" price:400 destination:"Mountain View, CA"
+2022/07/09 20:45:36 EOF
+```
+
+#### UpdateOrders: Client Streaming
+
+```bash
+2022/07/09 20:45:36 Update Orders Res : value:"Orders processed Updated Order IDs : 102, 103, 104, "
+```
+
+#### ProcessOrders: Bidrectional Streaming
+
+```bash
+2022/07/09 20:45:36 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"102" items:"Google Pixel 3A" items:"Google Pixel Book" price:1100 destination:"Mountain View, CA" id:"104" items:"Google Home Mini" items:"Google Nest Hub" items:"iPad Mini" price:2200 destination:"Mountain View, CA"])
+2022/07/09 20:45:36 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"103" items:"Apple Watch S4" items:"Mac Book Pro" items:"iPad Pro" price:2800 destination:"San Jose, CA"])
+2022/07/09 20:45:37 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"])
+```
+
+---
+
+## Advanced
+
+## Interceptor
+
+### Server
+
+#### AddOrder: Unary
+
+```bash
+2022/07/23 14:56:26 ======= [Server Interceptor]  /ecommerce.OrderManagement/addOrder
+2022/07/23 14:56:26  Pre Proc Message : id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
+2022/07/23 14:56:26 Order Added. ID : 101
+2022/07/23 14:56:26  Post Proc Message : id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
+```
+
+#### GetOrder: Unary
+
+```bash
+2022/07/23 14:56:26 ======= [Server Interceptor]  /ecommerce.OrderManagement/getOrder
+2022/07/23 14:56:26  Pre Proc Message : value:"106"
+2022/07/23 14:56:26  Post Proc Message : value:"106"
+```
+
+#### SearchOrders 'Google': Server Streaming
 
 ```bash
 # Stream
@@ -200,14 +270,6 @@ add interceptor:
 #### UpdateOrders: Client Streaming
 
 ```bash
-2022/07/09 20:45:47 Order ID : 102 - Updated
-2022/07/09 20:45:47 Order ID : 103 - Updated
-2022/07/09 20:45:47 Order ID : 104 - Updated
-```
-
-add interceptor:
-
-```bash
 # Stream
 2022/07/23 15:34:20 ====== [Server Stream Interceptor]  /ecommerce.OrderManagement/updateOrders
 
@@ -229,22 +291,6 @@ add interceptor:
 ```
 
 #### ProcessOrders: Bi directional Streaming
-
-```bash
-2022/07/09 20:45:47 Reading Proc order : value:"102"
-2022/07/09 20:45:47 1cmb - Mountain View, CA
-2022/07/09 20:45:47 Reading Proc order : value:"103"
-2022/07/09 20:45:47 1cmb - San Jose, CA
-2022/07/09 20:45:47 Reading Proc order : value:"104"
-2022/07/09 20:45:47 Shipping : cmb - Mountain View, CA -> 2
-2022/07/09 20:45:47 Shipping : cmb - San Jose, CA -> 1
-2022/07/09 20:45:48 Reading Proc order : value:"101"
-2022/07/09 20:45:48 1cmb - San Jose, CA
-2022/07/09 20:45:48 Reading Proc order : <nil>
-2022/07/09 20:45:48 EOF : <nil>
-```
-
-add interceptor:
 
 ```bash
 2022/07/23 15:39:55 ====== [Server Stream Interceptor]  /ecommerce.OrderManagement/processOrders
@@ -286,12 +332,6 @@ add interceptor:
 #### AddOrder 101: Unary
 
 ```bash
-2022/07/09 20:45:36 AddOrder Response -> Order Added: 101
-```
-
-add interceptor:
-
-```bash
 2022/07/23 16:18:54 Method : /ecommerce.OrderManagement/addOrder
 2022/07/23 16:18:54 value:"Order Added: 101"
 2022/07/23 16:18:54 AddOrder Response -> Order Added: 101
@@ -300,26 +340,12 @@ add interceptor:
 #### GetOrder 106: Unary
 
 ```bash
-2022/07/09 20:45:36 GetOrder Response -> : id:"106" items:"Amazon Echo" items:"Apple iPhone XS" price:300 destination:"Mountain View, CA"
-```
-
-add interceptor:
-
-```bash
 2022/07/23 16:18:54 Method : /ecommerce.OrderManagement/getOrder
 2022/07/23 16:18:54 id:"106" items:"Amazon Echo" items:"Apple iPhone XS" price:300 destination:"Mountain View, CA"
 2022/07/23 16:18:54 GetOrder Response -> : id:"106" items:"Amazon Echo" items:"Apple iPhone XS" price:300 destination:"Mountain View, CA"
 ```
 
 #### SearchOrders 'Google': Server Streaming
-
-```bash
-2022/07/09 20:45:36 Search Result : id:"102" items:"Google Pixel 3A" items:"Mac Book Pro" price:1800 destination:"Mountain View, CA"
-2022/07/09 20:45:36 Search Result : id:"104" items:"Google Home Mini" items:"Google Nest Hub" price:400 destination:"Mountain View, CA"
-2022/07/09 20:45:36 EOF
-```
-
-add interceptor:
 
 ```bash
 # Stream
@@ -344,12 +370,6 @@ add interceptor:
 #### UpdateOrders: Client Streaming
 
 ```bash
-2022/07/09 20:45:36 Update Orders Res : value:"Orders processed Updated Order IDs : 102, 103, 104, "
-```
-
-add interceptor:
-
-```bash
 # Stream
 2022/07/23 18:49:54 ======= [Client Interceptor]  /ecommerce.OrderManagement/updateOrders
 
@@ -370,14 +390,6 @@ add interceptor:
 #### ProcessOrders: Bidrectional Streaming
 
 ```bash
-2022/07/09 20:45:36 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"102" items:"Google Pixel 3A" items:"Google Pixel Book" price:1100 destination:"Mountain View, CA" id:"104" items:"Google Home Mini" items:"Google Nest Hub" items:"iPad Mini" price:2200 destination:"Mountain View, CA"])
-2022/07/09 20:45:36 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"103" items:"Apple Watch S4" items:"Mac Book Pro" items:"iPad Pro" price:2800 destination:"San Jose, CA"])
-2022/07/09 20:45:37 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"])
-```
-
-add interceptor:
-
-```bash
 # Stream
 2022/07/23 18:54:08 ======= [Client Interceptor]  /ecommerce.OrderManagement/processOrders
 
@@ -395,16 +407,124 @@ add interceptor:
 
 # Recv
 2022/07/23 18:54:08 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T18:54:08+09:00
-2022/07/23 18:54:08 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"103"  items:"Apple Watch S4"  items:"Mac Book Pro"  items:"iPad Pro"  price:2800  destination:"San Jose, CA"])
+2022/07/23 18:54:08 Combined shipment : [id:"103" items:"Apple Watch S4" items:"Mac Book Pro" items:"iPad Pro" price:2800 destination:"San Jose, CA"]
 
 # Recv
 2022/07/23 18:54:08 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T18:54:08+09:00
-2022/07/23 18:54:08 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"102"  items:"Google Pixel 3A"  items:"Google Pixel Book"  price:1100  destination:"Mountain View, CA" id:"104"  items:"Google Home Mini"  items:"Google Nest Hub"  items:"iPad Mini"  price:2200  destination:"Mountain View, CA"])
+2022/07/23 18:54:08 Combined shipment : [id:"102" items:"Google Pixel 3A" items:"Google Pixel Book" price:1100 destination:"Mountain View, CA" id:"104" items:"Google Home Mini" items:"Google Nest Hub" items:"iPad Mini" price:2200 destination:"Mountain View, CA"]
 
 # Recv
 2022/07/23 18:54:08 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T18:54:08+09:00
-2022/07/23 18:54:08 Combined shipment : %!(EXTRA []*ecommerce.Order=[id:"101"  items:"iPhone XS"  items:"Mac Book Pro"  price:2300  destination:"San Jose, CA"])
+2022/07/23 18:54:08 Combined shipment : [id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"]
 
 # Recv: io.EOF
 2022/07/23 18:54:08 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T18:54:08+09:00
+```
+
+---
+
+## Deadlines
+
+### Server
+
+```bash
+2022/07/23 19:33:19 ======= [Server Interceptor]  /ecommerce.OrderManagement/addOrder
+2022/07/23 19:33:19  Pre Proc Message : id:"101"  items:"iPhone XS"  items:"Mac Book Pro"  price:2300  destination:"San Jose, CA"
+
+# Sleep 5s
+2022/07/23 19:33:19 Sleeping for:  5 s
+
+# DEADLINE_EXCEEDED
+2022/07/23 19:33:24 RPC has reached deadline exceeded state : context deadline exceeded
+
+2022/07/23 19:33:24  Post Proc Message : id:"101"  items:"iPhone XS"  items:"Mac Book Pro"  price:2300  destination:"San Jose, CA"
+```
+
+### Client
+
+```bash
+# Deadline 2s
+2022/07/23 19:33:19 Method : /ecommerce.OrderManagement/addOrder
+2022/07/23 19:33:21
+
+# DEADLINE_EXCEEDED
+2022/07/23 19:33:21 Error Occured -> addOrder : DeadlineExceeded
+```
+
+---
+
+## Cancellation
+
+### Client side cancel
+
+#### Server
+
+```bash
+2022/07/23 20:07:38 ====== [Server Stream Interceptor]  /ecommerce.OrderManagement/processOrders
+2022/07/23 20:07:38 ====== [Server Stream Interceptor Wrapper] Receive a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:07:38+09:00
+2022/07/23 20:07:38 Reading Proc order : value:"102"
+2022/07/23 20:07:38 1cmb - Mountain View, CA
+2022/07/23 20:07:38  Context Cacelled for this stream: -> context canceled
+2022/07/23 20:07:38 Stopped processing any more order of this stream!
+2022/07/23 20:07:38 RPC failed with error context canceled
+```
+
+#### Client
+
+```bash
+2022/07/23 20:07:38 ======= [Client Interceptor]  /ecommerce.OrderManagement/processOrders
+2022/07/23 20:07:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:07:38+09:00
+2022/07/23 20:07:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:07:38+09:00
+2022/07/23 20:07:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:07:38+09:00
+2022/07/23 20:07:38 RPC Status : context canceled
+2022/07/23 20:07:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:07:38+09:00
+2022/07/23 20:07:38 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:07:38+09:00
+2022/07/23 20:07:38 Error Receiving messages rpc error: code = Canceled desc = context canceled
+```
+
+### Server side Cancel
+
+#### Server
+
+```bash
+2022/07/23 20:10:10 ====== [Server Stream Interceptor]  /ecommerce.OrderManagement/processOrders
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Receive a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:10:10+09:00
+2022/07/23 20:10:10 Reading Proc order : value:"102"
+2022/07/23 20:10:10 1cmb - Mountain View, CA
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Receive a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:10:10+09:00
+2022/07/23 20:10:10 Reading Proc order : value:"103"
+2022/07/23 20:10:10 1cmb - San Jose, CA
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Receive a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:10:10+09:00
+2022/07/23 20:10:10 Reading Proc order : value:"104"
+2022/07/23 20:10:10 Shipping : cmb - Mountain View, CA -> 2
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Send a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:10:10+09:00
+2022/07/23 20:10:10 Shipping : cmb - San Jose, CA -> 1
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Send a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:10:10+09:00
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Receive a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:10:10+09:00
+2022/07/23 20:10:10 Reading Proc order : value:"101"
+2022/07/23 20:10:10 1cmb - San Jose, CA
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Receive a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:10:10+09:00
+2022/07/23 20:10:10 Reading Proc order : <nil>
+2022/07/23 20:10:10 EOF : <nil>
+2022/07/23 20:10:10 ====== [Server Stream Interceptor Wrapper] Send a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:10:10+09:00
+```
+
+#### Client
+
+```bash
+2022/07/23 20:12:38 ======= [Client Interceptor]  /ecommerce.OrderManagement/processOrders
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Send a message (Type: *wrapperspb.StringValue) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 Combined shipment : [id:"102" items:"Google Pixel 3A" items:"Google Pixel Book" price:1100 destination:"Mountain View, CA" id:"104" items:"Google Home Mini" items:"Google Nest Hub" items:"iPad Mini" price:2200 destination:"Mountain View, CA"]
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 Combined shipment : [id:"103" items:"Apple Watch S4" items:"Mac Book Pro" items:"iPad Pro" price:2800 destination:"San Jose, CA"]
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 Combined shipment : [id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"]
+
+# Server side cancel
+2022/07/23 20:12:38 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:12:38+09:00
+2022/07/23 20:12:38 Error Receiving messages EOF
 ```

@@ -9,6 +9,7 @@ import (
 
 	wrapper "github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -28,15 +29,31 @@ func main() {
 	}
 	defer conn.Close()
 	client := pb.NewOrderManagementClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+
+	/* Deadline
+	clientDeadline := time.Now().Add(time.Duration(2 * time.Second))
+	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+	*/
+
+	/* Cancellation
+
+	 */
+	ctx, cancel := context.WithCancel(context.Background())
+
+	// or just timeout
+	// ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
 	/* Unary RPC */
 
 	// Add Order
 	order1 := pb.Order{Id: "101", Items: []string{"iPhone XS", "Mac Book Pro"}, Destination: "San Jose, CA", Price: 2300.00}
-	res, _ := client.AddOrder(ctx, &order1)
-	if res != nil {
+	res, addErr := client.AddOrder(ctx, &order1)
+
+	if addErr != nil {
+		got := status.Code(addErr)
+		log.Printf("Error Occured -> addOrder : %v", got)
+	} else {
 		log.Print("AddOrder Response -> ", res.Value)
 	}
 
@@ -120,6 +137,11 @@ func main() {
 	go asyncClientBidirectionalRPC(streamProcOrder, channel)
 	// time.Sleep(time.Millisecond * 1000)
 
+	/* Cancellation
+	cancel()
+	log.Printf("RPC Status : %s", ctx.Err())
+	*/
+
 	if err := streamProcOrder.Send(&wrapper.StringValue{Value: "101"}); err != nil {
 		log.Fatalf("%v.Send(%v) = %v", client, "101", err)
 	}
@@ -132,10 +154,15 @@ func main() {
 func asyncClientBidirectionalRPC(streamProcOrder pb.OrderManagement_ProcessOrdersClient, c chan struct{}) {
 	for {
 		combinedShipment, errProcOrder := streamProcOrder.Recv()
-		if errProcOrder == io.EOF {
+		if errProcOrder != nil {
+			log.Printf("Error Receiving messages %v", errProcOrder)
 			break
+		} else {
+			if errProcOrder == io.EOF {
+				break
+			}
+			log.Printf("Combined shipment : %s", combinedShipment.OrdersList)
 		}
-		log.Printf("Combined shipment : ", combinedShipment.OrdersList)
 	}
 	<-c
 }
