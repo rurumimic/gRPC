@@ -17,7 +17,12 @@ const (
 
 func main() {
 	// Setting up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(
+		address,
+		grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(orderUnaryClientInterceptor),
+		grpc.WithStreamInterceptor(clientStreamInterceptor),
+	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -112,7 +117,7 @@ func main() {
 	}
 
 	channel := make(chan struct{})
-	go asncClientBidirectionalRPC(streamProcOrder, channel)
+	go asyncClientBidirectionalRPC(streamProcOrder, channel)
 	// time.Sleep(time.Millisecond * 1000)
 
 	if err := streamProcOrder.Send(&wrapper.StringValue{Value: "101"}); err != nil {
@@ -124,7 +129,7 @@ func main() {
 	channel <- struct{}{}
 }
 
-func asncClientBidirectionalRPC(streamProcOrder pb.OrderManagement_ProcessOrdersClient, c chan struct{}) {
+func asyncClientBidirectionalRPC(streamProcOrder pb.OrderManagement_ProcessOrdersClient, c chan struct{}) {
 	for {
 		combinedShipment, errProcOrder := streamProcOrder.Recv()
 		if errProcOrder == io.EOF {
@@ -133,4 +138,46 @@ func asncClientBidirectionalRPC(streamProcOrder pb.OrderManagement_ProcessOrders
 		log.Printf("Combined shipment : ", combinedShipment.OrdersList)
 	}
 	<-c
+}
+
+func orderUnaryClientInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	// Pre-processor phase
+	log.Println("Method : " + method)
+
+	// Invoking the remote method
+	err := invoker(ctx, method, req, reply, cc, opts...)
+
+	// Post-processor phase
+	log.Println(reply)
+
+	return err
+}
+
+type wrappedStream struct {
+	grpc.ClientStream
+}
+
+func (w *wrappedStream) RecvMsg(m interface{}) error {
+	log.Printf("====== [Client Stream Interceptor] Receive a message (Type: %T) at %v", m, time.Now().Format(time.RFC3339))
+	return w.ClientStream.RecvMsg(m)
+}
+
+func (w *wrappedStream) SendMsg(m interface{}) error {
+	log.Printf("====== [Client Stream Interceptor] Send a message (Type: %T) at %v", m, time.Now().Format(time.RFC3339))
+	return w.ClientStream.SendMsg(m)
+}
+
+func newWrappedStream(s grpc.ClientStream) grpc.ClientStream {
+	return &wrappedStream{s}
+}
+
+func clientStreamInterceptor(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	log.Println("======= [Client Interceptor] ", method)
+
+	s, err := streamer(ctx, desc, cc, method, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return newWrappedStream(s), nil
 }
