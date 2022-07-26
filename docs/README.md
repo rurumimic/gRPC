@@ -29,12 +29,11 @@
     - unary/stream interceptor
   - [Deadline](advanced.md#deadline)
   - [Cancellation](advanced.md#cancellation)
-  - [Compression](advanced.md#compression)
-  - [Keepalive](advanced.md#keepalive)
-  - [Metadata](advanced.md#metadata)
   - [Error Handling](advanced.md#error-handling)
+  - [Metadata](advanced.md#metadata)
   - [Load Balancing](advanced.md#load-balancing)
   - [Multiplexing](advanced.md#multiplexing)
+  - [Compression](advanced.md#compression)
 - Secure
 - Production
 - Ecosystem

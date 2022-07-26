@@ -528,3 +528,26 @@ pass
 2022/07/23 20:12:38 ====== [Client Stream Interceptor] Receive a message (Type: *ecommerce.CombinedShipment) at 2022-07-23T20:12:38+09:00
 2022/07/23 20:12:38 Error Receiving messages EOF
 ```
+
+---
+
+## Error Handling
+
+### Server
+
+```bash
+2022/07/26 19:51:11 ======= [Server Interceptor]  /ecommerce.OrderManagement/addOrder
+2022/07/26 19:51:11  Pre Proc Message : id:"-1" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
+2022/07/26 19:51:11 Order ID is invalid! -> Received Order ID -1
+2022/07/26 19:51:11  Post Proc Message : id:"-1" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
+```
+
+### Client
+
+```bash
+2022/07/26 19:51:11 Method : /ecommerce.OrderManagement/addOrder
+2022/07/26 19:51:11
+2022/07/26 19:51:11 Invalid Argument Error : InvalidArgument
+2022/07/26 19:51:11 Request Field Invalid: field:"ID" description:"Order ID received is not valid -1 : "
+```
+

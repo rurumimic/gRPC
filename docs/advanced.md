@@ -253,13 +253,60 @@ log.Printf("RPC Status : %s", ctx.Err())
 
 ---
 
-## Compression
+## Error Handling
 
+- grpc: [Error handling](https://www.grpc.io/docs/guides/error/)
+   - github: [statuscodes](https://github.com/grpc/grpc/blob/master/doc/statuscodes.md)
+   - go: [codes](https://pkg.go.dev/google.golang.org/grpc/codes)
 
----
+### Example
 
-## Keepalive
+```go
+import (
+  epb "google.golang.org/genproto/googleapis/rpc/errdetails"
+  "google.golang.org/grpc/codes"
+  "google.golang.org/grpc/status"
+)
+```
 
+#### Server
+
+```go
+if orderReq.Id == "-1" {
+  errorStatus := status.New(codes.InvalidArgument, "Invalid information received")
+  ds, err := errorStatus.WithDetails(
+    &epb.BadRequest_FieldViolation{
+      Field:       "ID",
+      Description: fmt.Sprintf("Order ID received is not valid %s : %s", orderReq.Id, orderReq.Description),
+    },
+  )
+  if err != nil {
+    return nil, errorStatus.Err()
+  }
+
+  return nil, ds.Err()
+}
+```
+
+#### Client
+
+```go
+res, invalidError := client.AddOrder(ctx, &invalidOrder)
+if invalidError != nil {
+  errorCode := status.Code(invliadError)
+  if errorCode == codes.InvalidArgument {
+    errorStatus := status.Convert(invlidError)
+    for _, d := range errorStatus.Details() {
+      switch info := d.(type) {
+      case *epb.BadRequest_FieldViolation:
+        log.Printf(info)
+      default:
+        log.Printf(info)
+      }
+    }
+  }
+}
+```
 
 ---
 
@@ -279,5 +326,9 @@ log.Printf("RPC Status : %s", ctx.Err())
 ---
 
 ## Multiplexing
+
+---
+
+## Compression
 
 

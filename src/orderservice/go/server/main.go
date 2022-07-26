@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
+	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/reflection"
@@ -46,6 +47,23 @@ func (s *server) AddOrder(ctx context.Context, orderReq *pb.Order) (*wrapper.Str
 		return nil, ctx.Err()
 	}
 	*/
+
+	if orderReq.Id == "-1" {
+		log.Printf("Order ID is invalid! -> Received Order ID %s", orderReq.Id)
+
+		errorStatus := status.New(codes.InvalidArgument, "Invalid information received")
+		ds, err := errorStatus.WithDetails(
+			&epb.BadRequest_FieldViolation{
+				Field:       "ID",
+				Description: fmt.Sprintf("Order ID received is not valid %s : %s", orderReq.Id, orderReq.Description),
+			},
+		)
+		if err != nil {
+			return nil, errorStatus.Err()
+		}
+
+		return nil, ds.Err()
+	}
 
 	log.Printf("Order Added. ID : %v", orderReq.Id)
 	orderMap[orderReq.Id] = *orderReq

@@ -8,7 +8,9 @@ import (
 	"time"
 
 	wrapper "github.com/golang/protobuf/ptypes/wrappers"
+	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
@@ -45,6 +47,29 @@ func main() {
 	defer cancel()
 
 	/* Unary RPC */
+	// Add Invalid Order
+	invalidOrder := pb.Order{Id: "-1", Items: []string{"iPhone XS", "Mac Book Pro"}, Destination: "San Jose, CA", Price: 2300.00}
+	res, invalidError := client.AddOrder(ctx, &invalidOrder)
+
+	if invalidError != nil {
+		errorCode := status.Code(invalidError)
+		if errorCode == codes.InvalidArgument {
+			log.Printf("Invalid Argument Error : %s", errorCode)
+			errorStatus := status.Convert(invalidError)
+			for _, d := range errorStatus.Details() {
+				switch info := d.(type) {
+				case *epb.BadRequest_FieldViolation:
+					log.Printf("Request Field Invalid: %s", info)
+				default:
+					log.Printf("Unexpected error type: %s", info)
+				}
+			}
+		} else {
+			log.Printf("Unhandled error : %s ", errorCode)
+		}
+	} else {
+		log.Printf("AddOrder Response -> ", res.Value)
+	}
 
 	// Add Order
 	order1 := pb.Order{Id: "101", Items: []string{"iPhone XS", "Mac Book Pro"}, Destination: "San Jose, CA", Price: 2300.00}
