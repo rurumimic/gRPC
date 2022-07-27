@@ -551,3 +551,26 @@ pass
 2022/07/26 19:51:11 Request Field Invalid: field:"ID" description:"Order ID received is not valid -1 : "
 ```
 
+---
+
+## Multiplexing
+
+### Server
+
+```bash
+2022/07/27 19:48:20 ======= [Server Interceptor]  /helloworld.Greeter/SayHello
+2022/07/27 19:48:20  Pre Proc Message : name:"gRPC Up and Running!"
+2022/07/27 19:48:20 Greeter Service - SayHello RPC
+2022/07/27 19:48:20  Post Proc Message : name:"gRPC Up and Running!"
+# ...
+```
+
+### Client
+
+```bash
+2022/07/27 19:48:20 Method : /helloworld.Greeter/SayHello
+2022/07/27 19:48:20 message:"Hello gRPC Up and Running!"
+Greeting :  Hello gRPC Up and Running!
+# ...
+```
+

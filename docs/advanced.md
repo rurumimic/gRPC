@@ -310,6 +310,54 @@ if invalidError != nil {
 
 ---
 
+## Multiplexing
+
+protobuf: [helloworld](google.golang.org/grpc/examples/helloworld/helloworld)
+
+```go
+import (
+  hello_pb "google.golang.org/grpc/examples/helloworld/helloworld"
+)
+```
+
+```bash
+go mod tidy
+go run main.go
+```
+
+### Server
+
+```go
+pb.RegisterOrderManagementServer(s, &server{})
+pb.RegisterGreeterServer(s, &helloServer{})
+```
+
+```go
+type helloServer struct{}
+
+func (s *helloServer) SayHello(ctx context.Context, in *hello_pb.HelloRequest) (*hello_pb.HelloReply, error) {
+	log.Printf("Greeter Service - SayHello RPC")
+	return &hello_pb.HelloReply{Message: "Hello " + in.Name}, nil
+}
+```
+
+### Client
+
+```go
+helloClient := hello_pb.NewGreeterClient(conn)
+
+/* HelloWorld */
+helloCtx, helloCancel := context.WithTimeout(context.Background(), time.Second)
+defer helloCancel()
+helloResponse, err := helloClient.SayHello(helloCtx, &hello_pb.HelloRequest{Name: "gRPC Up and Running!"})
+if err != nil {
+  log.Fatalf("helloClient.SayHello(_) = _, %v", err)
+}
+fmt.Println("Greeting : ", helloResponse.Message)
+```
+
+---
+
 ## Metadata
 
 
@@ -322,10 +370,6 @@ if invalidError != nil {
 
 ## Load Balancing
 
-
----
-
-## Multiplexing
 
 ---
 

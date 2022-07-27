@@ -30,9 +30,9 @@
   - [Deadline](advanced.md#deadline)
   - [Cancellation](advanced.md#cancellation)
   - [Error Handling](advanced.md#error-handling)
+  - [Multiplexing](advanced.md#multiplexing)
   - [Metadata](advanced.md#metadata)
   - [Load Balancing](advanced.md#load-balancing)
-  - [Multiplexing](advanced.md#multiplexing)
   - [Compression](advanced.md#compression)
 - Secure
 - Production

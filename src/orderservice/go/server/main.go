@@ -9,6 +9,7 @@ import (
 	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	hello_pb "google.golang.org/grpc/examples/helloworld/helloworld"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
@@ -29,6 +30,15 @@ const (
 )
 
 var orderMap = make(map[string]pb.Order)
+
+type helloServer struct {
+	hello_pb.UnimplementedGreeterServer
+}
+
+func (s *helloServer) SayHello(ctx context.Context, in *hello_pb.HelloRequest) (*hello_pb.HelloReply, error) {
+	log.Printf("Greeter Service - SayHello RPC")
+	return &hello_pb.HelloReply{Message: "Hello " + in.Name}, nil
+}
 
 type server struct {
 	orderMap map[string]*pb.Order
@@ -249,7 +259,9 @@ func main() {
 		grpc.UnaryInterceptor(orderUnaryServerInterceptor),
 		grpc.StreamInterceptor(orderServerStreamInterceptor),
 	)
+
 	pb.RegisterOrderManagementServer(s, &server{})
+	hello_pb.RegisterGreeterServer(s, &helloServer{})
 
 	// Register reflection service on gRPC server.
 	reflection.Register(s)

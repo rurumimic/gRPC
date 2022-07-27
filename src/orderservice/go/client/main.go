@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	pb "ordermgt/client/ecommerce"
@@ -11,6 +12,7 @@ import (
 	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	hello_pb "google.golang.org/grpc/examples/helloworld/helloworld"
 	"google.golang.org/grpc/status"
 )
 
@@ -30,7 +32,18 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
+
+	helloClient := hello_pb.NewGreeterClient(conn)
 	client := pb.NewOrderManagementClient(conn)
+
+	/* HelloWorld */
+	helloCtx, helloCancel := context.WithTimeout(context.Background(), time.Second)
+	defer helloCancel()
+	helloResponse, err := helloClient.SayHello(helloCtx, &hello_pb.HelloRequest{Name: "gRPC Up and Running!"})
+	if err != nil {
+		log.Fatalf("orderManagementClient.SayHello(_) = _, %v", err)
+	}
+	fmt.Println("Greeting : ", helloResponse.Message)
 
 	/* Deadline
 	clientDeadline := time.Now().Add(time.Duration(2 * time.Second))
