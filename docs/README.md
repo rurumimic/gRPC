@@ -32,7 +32,7 @@
   - [Error Handling](advanced.md#error-handling)
   - [Multiplexing](advanced.md#multiplexing)
   - [Metadata](advanced.md#metadata)
-  - [Load Balancing](advanced.md#load-balancing)
+  - [Load Balancing](advanced.md#load-balancing), Name Resolve
   - [Compression](advanced.md#compression)
 - Secure
 - Production

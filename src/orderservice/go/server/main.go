@@ -5,22 +5,22 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
-	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	hello_pb "google.golang.org/grpc/examples/helloworld/helloworld"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/status"
-
-	/*"github.com/golang/protobuf/ptypes/wrappers"
-	"google.golang.org/grpc"*/
 	"io"
 	"log"
 	"net"
 	pb "ordermgt/server/ecommerce"
 	"strings"
+
+	"github.com/golang/protobuf/ptypes/wrappers"
+	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+
+	_ "google.golang.org/grpc/encoding/gzip" // Install the gzip compressor
+	hello_pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/reflection"
+	"google.golang.org/grpc/status"
 
 	wrapper "github.com/golang/protobuf/ptypes/wrappers"
 )

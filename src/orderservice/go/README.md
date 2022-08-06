@@ -616,3 +616,26 @@ Header: content-type. [application/grpc]
 Header: location. [MTV]
 Trailer: timestamp. [Aug  6 14:58:50.649182000]
 ```
+
+---
+
+## Compression
+
+### gzip
+#### Server
+
+```bash
+====> Metadata grpc-accept-encoding. [gzip]
+```
+
+### Unimplemented
+
+#### Client
+
+```bash
+2022/08/06 17:32:55 Method : /ecommerce.OrderManagement/addOrder
+2022/08/06 17:32:55
+2022/08/06 17:32:55 Error Occured -> addOrder : Unimplemented
+2022/08/06 17:32:55 timestamp expected but doesn't exist in header
+exit status 1
+```

@@ -1,5 +1,7 @@
 # Advanced
 
+- grpc-go: [features](https://github.com/grpc/grpc-go/tree/master/examples/features)
+
 ## Interceptors
 
 - grpc: [Interceptors in gRPC-Web](https://grpc.io/blog/grpc-web-interceptor/)
@@ -630,16 +632,140 @@ func (s *server) SomeStreamingRPC(stream pb.Service_SomeStreamingRPCServer) erro
 
 ---
 
-## Error Handling
-
-
----
-
 ## Load Balancing
 
+- [load balancer](/src/loadbalancer/README.md)
+
+### Ref
+
+- gRPC: [Name Resolution](https://grpc.github.io/grpc/core/md_doc_naming.html)
+- examples
+  - [name resolving](https://github.com/grpc/grpc-go/tree/master/examples/features/name_resolving)
+    - [client.go](https://github.com/grpc/grpc-go/blob/master/examples/features/name_resolving/client/main.go)
+  - [load balancing](https://github.com/grpc/grpc-go/blob/master/examples/features/load_balancing)
+    - [server.go](https://github.com/grpc/grpc-go/blob/master/examples/features/load_balancing/server/main.go)
+    - [client.go](https://github.com/grpc/grpc-go/blob/master/examples/features/load_balancing/client/main.go)
+- doc
+  - [Resolver](https://godoc.org/google.golang.org/grpc/resolver#Resolver)
+  - [Builder](https://godoc.org/google.golang.org/grpc/resolver#Builder)
+
+### Name Resolver
+
+```go
+const (
+  exampleScheme = "example"
+  exampleServiceName = "resolver.example.grpc.io"
+)
+
+var addrs = []string{"localhost:50051", "localhost:50052"}
+
+type exampleResolverBuilder struct{}
+
+func (*exampleResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
+  r := &exampleResolver {
+    target: target,
+    cc: cc,
+    addrsStore: map[string][]string{
+      exampleServiceName: addrs,
+    },
+  }
+
+  r.start()
+
+  return r, nil
+}
+
+func (*exampleResolverBuilder) Scheme() string { return exampleScheme }
+
+type exampleResolver struct {
+  target     resolver.Target
+  cc         resolver.ClientConn
+  addrsStore map[string][]string
+}
+
+func (r *exampleResolver) start() {
+  addrStrs := r.addrsStore[r.target.Endpoint]
+  addrs := make([]resolver.Address, len(addrStrs))
+  for i, s := range addrStrs {
+    addrs[i] = resolver.Address{Addr: s}
+  }
+  r.cc.UpdateState(resolver.State{Addresses: addrs})
+}
+
+func (*exampleResolver) ResolveNow(o resolver.ResolveNowOption) {}
+func (*exampleResolver) Close() {}
+
+func init() {
+  resolver.Register(&exampleResolverBuilder{})
+}
+```
+
+### Client Side Load Balancer
+
+- Thick(Fat) Client
+- Lookaside Load Balancer
+
+`scheme:///server`
+
+#### Client
+
+pick first:
+
+```go
+// "pick_first" is the default, so there's no need to set the load balancing policy.
+pickfirstConn, err := grpc.Dial(
+  fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName),
+  grpc.WithInsecure(),
+)
+if err != nil {
+  log.Fatalf("did not connect: %v", err)
+}
+defer pickfirstConn.Close()
+
+fmt.Println("--- calling helloworld.Greeter/SayHello with pick_first ---")
+makeRPCs(pickfirstConn, 10)
+```
+
+round robin:
+
+```go
+// Make another ClientConn with round_robin policy.
+roundrobinConn, err := grpc.Dial(
+  fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName),
+  grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`), // This sets the initial balancing policy.
+  grpc.WithInsecure(),
+)
+if err != nil {
+log.Fatalf("did not connect: %v", err)
+}
+defer roundrobinConn.Close()
+
+fmt.Println("--- calling helloworld.Greeter/SayHello with round_robin ---")
+makeRPCs(roundrobinConn, 10)
+```
 
 ---
 
 ## Compression
 
+- example: [compression](https://github.com/grpc/grpc-go/tree/master/examples/features/compression)
+  - [server.go](https://github.com/grpc/grpc-go/blob/master/examples/features/compression/server/main.go)
+  - [client.go](https://github.com/grpc/grpc-go/blob/master/examples/features/compression/client/main.go)
 
+### Server
+
+```go
+import (
+  _ "google.golang.org/grpc/encoding/gzip" // Install the gzip compressor
+)
+```
+
+### Client
+
+```go
+import (
+  "google.golang.org/grpc/encoding/gzip" // Install the gzip compressor
+)
+
+res, _ := client.AddOrder(ctx, &order1, grpc.UseCompressor(gzip.Name))
+```

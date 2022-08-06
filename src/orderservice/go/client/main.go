@@ -15,6 +15,7 @@ import (
 	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/encoding/gzip"
 	hello_pb "google.golang.org/grpc/examples/helloworld/helloworld"
 	"google.golang.org/grpc/status"
 )
@@ -99,7 +100,7 @@ func main() {
 
 	// Add Order
 	order1 := pb.Order{Id: "101", Items: []string{"iPhone XS", "Mac Book Pro"}, Destination: "San Jose, CA", Price: 2300.00}
-	res, addErr := client.AddOrder(ctx, &order1, grpc.Header(&header), grpc.Trailer(&trailer))
+	res, addErr := client.AddOrder(ctx, &order1, grpc.Header(&header), grpc.Trailer(&trailer), grpc.UseCompressor(gzip.Name))
 
 	if addErr != nil {
 		got := status.Code(addErr)
@@ -157,78 +158,78 @@ func main() {
 		fmt.Printf("Trailer: %s. %s\n", k, v)
 	}
 
-	// /* Client streaming RPC */
+	/* Client streaming RPC */
 
-	// // =========================================
-	// // Update Orders : Client streaming scenario
-	// updOrder1 := pb.Order{Id: "102", Items: []string{"Google Pixel 3A", "Google Pixel Book"}, Destination: "Mountain View, CA", Price: 1100.00}
-	// updOrder2 := pb.Order{Id: "103", Items: []string{"Apple Watch S4", "Mac Book Pro", "iPad Pro"}, Destination: "San Jose, CA", Price: 2800.00}
-	// updOrder3 := pb.Order{Id: "104", Items: []string{"Google Home Mini", "Google Nest Hub", "iPad Mini"}, Destination: "Mountain View, CA", Price: 2200.00}
+	// =========================================
+	// Update Orders : Client streaming scenario
+	updOrder1 := pb.Order{Id: "102", Items: []string{"Google Pixel 3A", "Google Pixel Book"}, Destination: "Mountain View, CA", Price: 1100.00}
+	updOrder2 := pb.Order{Id: "103", Items: []string{"Apple Watch S4", "Mac Book Pro", "iPad Pro"}, Destination: "San Jose, CA", Price: 2800.00}
+	updOrder3 := pb.Order{Id: "104", Items: []string{"Google Home Mini", "Google Nest Hub", "iPad Mini"}, Destination: "Mountain View, CA", Price: 2200.00}
 
-	// updateStream, err := client.UpdateOrders(ctx)
+	updateStream, err := client.UpdateOrders(ctx)
 
-	// if err != nil {
-	// 	log.Fatalf("%v.UpdateOrders(_) = _, %v", client, err)
-	// }
+	if err != nil {
+		log.Fatalf("%v.UpdateOrders(_) = _, %v", client, err)
+	}
 
-	// // Updating order 1
-	// if err := updateStream.Send(&updOrder1); err != nil {
-	// 	log.Fatalf("%v.Send(%v) = %v", updateStream, updOrder1, err)
-	// }
+	// Updating order 1
+	if err := updateStream.Send(&updOrder1); err != nil {
+		log.Fatalf("%v.Send(%v) = %v", updateStream, updOrder1, err)
+	}
 
-	// // Updating order 2
-	// if err := updateStream.Send(&updOrder2); err != nil {
-	// 	log.Fatalf("%v.Send(%v) = %v", updateStream, updOrder2, err)
-	// }
+	// Updating order 2
+	if err := updateStream.Send(&updOrder2); err != nil {
+		log.Fatalf("%v.Send(%v) = %v", updateStream, updOrder2, err)
+	}
 
-	// // Updating order 3
-	// if err := updateStream.Send(&updOrder3); err != nil {
-	// 	log.Fatalf("%v.Send(%v) = %v", updateStream, updOrder3, err)
-	// }
+	// Updating order 3
+	if err := updateStream.Send(&updOrder3); err != nil {
+		log.Fatalf("%v.Send(%v) = %v", updateStream, updOrder3, err)
+	}
 
-	// updateRes, err := updateStream.CloseAndRecv()
-	// if err != nil {
-	// 	log.Fatalf("%v.CloseAndRecv() got error %v, want %v", updateStream, err, nil)
-	// }
-	// log.Printf("Update Orders Res : %s", updateRes)
+	updateRes, err := updateStream.CloseAndRecv()
+	if err != nil {
+		log.Fatalf("%v.CloseAndRecv() got error %v, want %v", updateStream, err, nil)
+	}
+	log.Printf("Update Orders Res : %s", updateRes)
 
-	// /* Bidirectional streaming RPC */
+	/* Bidirectional streaming RPC */
 
-	// // =========================================
-	// // Process Order : Bi-di streaming scenario
-	// streamProcOrder, err := client.ProcessOrders(ctx)
-	// if err != nil {
-	// 	log.Fatalf("%v.ProcessOrders(_) = _, %v", client, err)
-	// }
+	// =========================================
+	// Process Order : Bi-di streaming scenario
+	streamProcOrder, err := client.ProcessOrders(ctx)
+	if err != nil {
+		log.Fatalf("%v.ProcessOrders(_) = _, %v", client, err)
+	}
 
-	// if err := streamProcOrder.Send(&wrapper.StringValue{Value: "102"}); err != nil {
-	// 	log.Fatalf("%v.Send(%v) = %v", client, "102", err)
-	// }
+	if err := streamProcOrder.Send(&wrapper.StringValue{Value: "102"}); err != nil {
+		log.Fatalf("%v.Send(%v) = %v", client, "102", err)
+	}
 
-	// if err := streamProcOrder.Send(&wrapper.StringValue{Value: "103"}); err != nil {
-	// 	log.Fatalf("%v.Send(%v) = %v", client, "103", err)
-	// }
+	if err := streamProcOrder.Send(&wrapper.StringValue{Value: "103"}); err != nil {
+		log.Fatalf("%v.Send(%v) = %v", client, "103", err)
+	}
 
-	// if err := streamProcOrder.Send(&wrapper.StringValue{Value: "104"}); err != nil {
-	// 	log.Fatalf("%v.Send(%v) = %v", client, "104", err)
-	// }
+	if err := streamProcOrder.Send(&wrapper.StringValue{Value: "104"}); err != nil {
+		log.Fatalf("%v.Send(%v) = %v", client, "104", err)
+	}
 
-	// channel := make(chan struct{})
-	// go asyncClientBidirectionalRPC(streamProcOrder, channel)
-	// // time.Sleep(time.Millisecond * 1000)
+	channel := make(chan struct{})
+	go asyncClientBidirectionalRPC(streamProcOrder, channel)
+	// time.Sleep(time.Millisecond * 1000)
 
-	// /* Cancellation
-	// cancel()
-	// log.Printf("RPC Status : %s", ctx.Err())
-	// */
+	/* Cancellation
+	cancel()
+	log.Printf("RPC Status : %s", ctx.Err())
+	*/
 
-	// if err := streamProcOrder.Send(&wrapper.StringValue{Value: "101"}); err != nil {
-	// 	log.Fatalf("%v.Send(%v) = %v", client, "101", err)
-	// }
-	// if err := streamProcOrder.CloseSend(); err != nil {
-	// 	log.Fatal(err)
-	// }
-	// channel <- struct{}{}
+	if err := streamProcOrder.Send(&wrapper.StringValue{Value: "101"}); err != nil {
+		log.Fatalf("%v.Send(%v) = %v", client, "101", err)
+	}
+	if err := streamProcOrder.CloseSend(); err != nil {
+		log.Fatal(err)
+	}
+	channel <- struct{}{}
 }
 
 func asyncClientBidirectionalRPC(streamProcOrder pb.OrderManagement_ProcessOrdersClient, c chan struct{}) {
