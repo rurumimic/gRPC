@@ -360,6 +360,273 @@ fmt.Println("Greeting : ", helloResponse.Message)
 
 ## Metadata
 
+- github: [metadata](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md)
+- pkg: [metadata](https://pkg.go.dev/google.golang.org/grpc/metadata)
+
+a map from string to a list of strings: `{'key': ['str', ...], }`
+
+```go
+type MD map[string][]string
+```
+
+### Example
+
+- order service: [README.md](/src/orderservice/go/README.md#metadata)
+- server: [orderservice / server / main.go](/src/orderservice/go/server/main.go)
+- client: [orderservice / client / main.go](/src/orderservice/go/client/main.go)
+
+```go
+import "google.golang.org/grpc/metadata"
+```
+
+#### Server
+
+unary rpc:
+
+```go
+func (s *server) AddOrder(ctx context.Context, orderReq *pb.Order) (*wrapper.StringValue, error) {
+  // ...
+
+	// Read metadata from client
+	md, metadataAvailable := metadata.FromIncomingContext(ctx)
+	if !metadataAvailable {
+		return nil, status.Errorf(codes.DataLoss, "UnaryEcho: failed to get metadata")
+	}
+	if t, ok := md["timestamp"]; ok {
+		fmt.Printf("timestamp from metadata:\n")
+		for i, e := range t {
+			fmt.Printf("====> Metadata %d. %s\n", i, e)
+		}
+
+		fmt.Println("Additional Metadata")
+		for k, v := range md {
+			fmt.Printf("====> Metadata %s. %s\n", k, v)
+		}
+	}
+
+	// create and send a header
+	header := metadata.New(map[string]string{"location": "San Jose", "timestamp": time.Now().Format(time.StampNano)})
+	grpc.SendHeader(ctx, header)
+
+  // ...
+}
+```
+
+stream rpc:
+
+```go
+func (s *server) SearchOrders(searchQuery *wrappers.StringValue, stream pb.OrderManagement_SearchOrdersServer) error {
+
+	defer func() {
+		trailer := metadata.Pairs("timestamp", time.Now().Format(time.StampNano))
+		stream.SetTrailer(trailer)
+	}()
+
+	header := metadata.New(map[string]string{"location": "MTV", "timestamp": time.Now().Format(time.StampNano)})
+	stream.SendHeader(header)
+
+  // ...
+}
+```
+
+#### Client
+
+unary rpc:
+
+```go
+md := metadata.Pairs(
+  "timestamp", time.Now().Format(time.StampNano),
+  "kn", "vn",
+)
+ctx = metadata.NewOutgoingContext(ctx, md)
+ctx = metadata.AppendToOutgoingContext(ctx, "k1", "v1", "k1", "v2", "k2", "v3")
+
+var header, trailer metadata.MD
+
+res, addErr := client.AddOrder(ctx, &order1, grpc.Header(&header), grpc.Trailer(&trailer))
+
+if t, ok := header["timestamp"]; ok {
+  log.Printf("timestamp from header:\n")
+  for i, e := range t {
+  	fmt.Printf(" %d. %s\n", i, e)
+  }
+} else {
+  log.Fatal("timestamp expected but doesn't exist in header")
+}
+if l, ok := header["location"]; ok {
+  log.Printf("location from header:\n")
+  for i, e := range l {
+  	fmt.Printf(" %d. %s\n", i, e)
+  }
+} else {
+  log.Fatal("location expected but doesn't exist in header")
+}
+```
+
+stream rpc:
+
+```go
+searchHeader, err := searchStream.Header()
+if err == nil {
+  for k, v := range searchHeader {
+  	fmt.Printf("Header: %s. %s\n", k, v)
+  }
+}
+
+searchTrailer := searchStream.Trailer()
+for k, v := range searchTrailer {
+  fmt.Printf("Trailer: %s. %s\n", k, v)
+}
+```
+
+### Create a new metadata
+
+#### New
+
+- doc: [New](https://pkg.go.dev/google.golang.org/grpc/metadata#New)
+
+```go
+func New(m map[string]string) MD
+```
+
+```go
+md := metadata.New(map[string]string{"key1": "val1", "key2": "val2"})
+```
+
+#### Paris
+
+- doc: [Pairs](https://pkg.go.dev/google.golang.org/grpc/metadata#Pairs)
+
+```go
+func Pairs(kv ...string) MD
+```
+
+all the keys will be automatically converted to lowercase:
+
+```go
+md := metadata.Pairs(
+    "key1", "val1",
+    "key1", "val1-2", // "key1" will have map value []string{"val1", "val1-2"}
+    "key2", "val2",
+)
+```
+
+#### Binary data
+
+this binary data will be encoded (base64) before sending,  
+and will be decoded after being transferred.
+
+simply add "-bin" suffix to the key:
+
+```go
+md := metadata.Pairs(
+    "key", "string value",
+    "key-bin", string([]byte{96, 102}),
+)
+```
+
+### Retrieve metadata from context
+
+```go
+func (s *server) SomeRPC(ctx context.Context, in *pb.SomeRequest) (*pb.SomeResponse, err) {
+    md, ok := metadata.FromIncomingContext(ctx)
+    // do something with metadata
+}
+```
+
+### Send and receive metadata - client side
+
+- example: [client.go](https://github.com/grpc/grpc-go/blob/master/examples/features/metadata/client/main.go)
+
+#### Send metadata
+
+```go
+md := metadata.Pairs(
+  "timestamp", time.Now().Format(timestampFormat),
+  "kn", "vn",
+)
+
+ctx := metadata.NewOutgoingContext(context.Background(), md)
+ctx := metadata.AppendToOutgoingContext(ctx, "k1", "v1", "k1", "v2", "k2", "v3")
+
+response, err := client.SomeRPC(ctx, someRequest) // Unary RPC
+stream, err := client.SomeStreamingRPC(ctx) // Streaming RPC
+```
+
+or:
+
+```go
+md := metadata.Pairs("k1", "v1", "k1", "v2", "k2", "v3")
+ctx := metadata.NewOutgoingContext(context.Background(), md)
+
+// in an intererceptor
+send, _ := metadata.FromOutgoingContext(ctx)
+newMD := metadata.Pairs("k3", "v3")
+ctx = metadata.NewOutgoingContext(ctx, metadata.Join(send, newMD))
+
+response, err := client.SomeRPC(ctx, someRequest) // Unary RPC
+stream, err := client.SomeStreamingRPC(ctx) // Streaming RPC
+```
+
+#### Recieve metadata
+
+- func [Header](https://pkg.go.dev/google.golang.org/grpc#Header)
+- func [Trailer](https://pkg.go.dev/google.golang.org/grpc#Trailer)
+
+```go
+var header, trailer metadata.MD
+
+r, err := client.SomeRPC( // Unary RPC
+  ctx,
+  someRequest,
+  grpc.Header(&header),
+  grpc.Trailer(&trailer),
+)
+
+stream, err := client.SomeStreamingRPC(ctx) // Streaming RPC
+header, err := stream.Header()
+trailer, err := stream.Trailer()
+```
+
+### Send and receive metadata - server side
+
+- example: [server.go](https://github.com/grpc/grpc-go/blob/master/examples/features/metadata/server/main.go)
+
+#### Recieve metadata
+
+```go
+func (s *server) SomeRPC(ctx context.Context, in *pb.someRequest) (*pb.someResponse, error) {
+    md, ok := metadata.FromIncomingContext(ctx)
+    // do something with metadata
+}
+
+func (s *server) SomeStreamingRPC(stream pb.Service_SomeStreamingRPCServer) error {
+    md, ok := metadata.FromIncomingContext(stream.Context()) // get context from stream
+    // do something with metadata
+}
+```
+
+#### Send metadata
+
+```go
+func (s *server) SomeRPC(ctx context.Context, in *pb.someRequest) (*pb.someResponse, error) {
+    // create and send header
+    header := metadata.Pairs("header-key", "val")
+    grpc.SendHeader(ctx, header)
+    // create and set trailer
+    trailer := metadata.Pairs("trailer-key", "val")
+    grpc.SetTrailer(ctx, trailer)
+}
+
+func (s *server) SomeStreamingRPC(stream pb.Service_SomeStreamingRPCServer) error {
+    // create and send header
+    header := metadata.Pairs("header-key", "val")
+    stream.SendHeader(header)
+    // create and set trailer
+    trailer := metadata.Pairs("trailer-key", "val")
+    stream.SetTrailer(trailer)
+}
+```
 
 ---
 

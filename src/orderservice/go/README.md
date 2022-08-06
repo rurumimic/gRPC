@@ -574,3 +574,45 @@ Greeting :  Hello gRPC Up and Running!
 # ...
 ```
 
+---
+
+## Metadata
+
+### Server
+
+```bash
+2022/08/06 14:41:42 ======= [Server Interceptor]  /ecommerce.OrderManagement/addOrder
+2022/08/06 14:41:42  Pre Proc Message : id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
+2022/08/06 14:41:42 Order Added. ID : 101
+timestamp from metadata:
+====> Metadata 0. Aug  6 14:41:42.637233000
+Additional Metadata
+====> Metadata content-type. [application/grpc]
+====> Metadata user-agent. [grpc-go/1.47.0]
+====> Metadata timestamp. [Aug  6 14:41:42.637233000]
+====> Metadata kn. [vn]
+====> Metadata k1. [v1 v2]
+====> Metadata k2. [v3]
+====> Metadata :authority. [localhost:50051]
+2022/08/06 14:41:42  Post Proc Message : id:"101" items:"iPhone XS" items:"Mac Book Pro" price:2300 destination:"San Jose, CA"
+```
+
+### Client
+
+```bash
+2022/08/06 14:48:35 Method : /ecommerce.OrderManagement/addOrder
+2022/08/06 14:48:35 value:"Order Added: 101"
+2022/08/06 14:48:35 AddOrder Response -> Order Added: 101
+2022/08/06 14:48:35 timestamp from header:
+ 0. Aug  6 14:48:35.674015000
+2022/08/06 14:48:35 location from header:
+ 0. San Jose
+```
+
+```bash
+Header: timestamp. [Aug  6 14:58:50.648896000]
+Header: content-type. [application/grpc]
+
+Header: location. [MTV]
+Trailer: timestamp. [Aug  6 14:58:50.649182000]
+```
