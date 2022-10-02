@@ -1,6 +1,6 @@
 # Documentation
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0101.png" style="max-width: 700px;">
+<img src="https://www.oreilly.com/api/v2/epubs/9781492058328/files/assets/grpc_0101.png" style="max-width: 700px;">
 
 ---
 
@@ -34,7 +34,10 @@
   - [Metadata](advanced.md#metadata)
   - [Load Balancing](advanced.md#load-balancing), Name Resolve
   - [Compression](advanced.md#compression)
-- Secure
+- [Secure](secure.md)
+  - basic authentication
+  - mTLS
+  - OAuth 2.0
 - Production
 - Ecosystem
   - [microservices architecture](microservices.md)
