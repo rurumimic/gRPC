@@ -1183,5 +1183,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/go,java,linux,macos,kotlin,visualstudiocode,windows,python,vim,emacs,c++,c,dart,node,objective-c,swift,ruby,csharp
-
-images
