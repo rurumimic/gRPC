@@ -1,6 +1,6 @@
 # gRPC
 
-<img src="/images/grpc.png" style="max-width: 700px;">
+<img src="./images/grpc.png" style="max-width: 700px;">
 
 ## [Documentation](docs/README.md)
 
