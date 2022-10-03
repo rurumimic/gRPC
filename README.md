@@ -4,7 +4,7 @@
 
 ## [Documentation](docs/README.md)
 
-- [Install](install.md) gRPC
+- [Install](docs/install.md) gRPC
 - gRPC
 - Helloworld
 - Product Info Servicemd)
