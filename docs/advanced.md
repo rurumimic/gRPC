@@ -8,7 +8,7 @@
 - grpc-go: [intercetor.go](https://github.com/grpc/grpc-go/blob/master/interceptor.go)
 
 
-![](https://grpc.io/img/grpc-web-interceptors.png)
+![](/images/interceptor.png)
 
 - Unary Interceptor
 - Stream Interceptor

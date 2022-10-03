@@ -7,10 +7,17 @@ package ecommerce;
 option go_package = "./ecommerce";
 
 service OrderManagement {
+  // Unary RPC
   rpc addOrder(Order) returns (google.protobuf.StringValue);
   rpc getOrder(google.protobuf.StringValue) returns (Order);
+
+  // Server streaming RPC
   rpc searchOrders(google.protobuf.StringValue) returns (stream Order);
+
+  // Client streaming RPC
   rpc updateOrders(stream Order) returns (google.protobuf.StringValue);
+
+  // Bidirectional streaming RPC
   rpc processOrders(stream google.protobuf.StringValue)
       returns (stream CombinedShipment);
 }

@@ -11,7 +11,7 @@
 
 ## RPC
 
-![](https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0401.png)
+![](/images/grpc_rpc.png)
 
 1. Client Process: call a function in the generated stub
 2. Client Stub: create an HTTP POST request
@@ -32,7 +32,7 @@
 
 ### Encoded Message
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0402.png" width="600px">
+<img src="/images/protobuf_message.png" width="600px">
 
 #### Wire Types
 
@@ -47,7 +47,7 @@
 
 #### Tag Value
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0403.png" width="300px">
+<img src="/images/protobuf_message_field.png" width="300px">
 
 ```go
 Tag Value = (field_number << 3) | wire_type
@@ -116,7 +116,7 @@ b := "testing"
 
 ## Length-Prefix Message Framing
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0404.png" width="600px">
+<img src="/images/length_fixed_frame.png" width="600px">
 
 - **Compressed Flag**: 1 byte
   - 0: no encoding
@@ -140,7 +140,7 @@ doc: [Protocol HTTP/2](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTT
 
 ### HTTP/2 Frame Header
 
-![](https://www.oreilly.com/library/view/learning-http2/9781491962435/assets/lht2_0401.png)
+![](/images/http2_header.png)
 
 
 ### Request Message
@@ -198,27 +198,27 @@ grpc-message = xxxxxx
 
 #### Unary RPC
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0408.png" width="900px">
+<img src="/images/grpc_http2_unary.png" width="900px">
 
 - End of Stream → half-close the connection
 
 #### Server Streaming RPC
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0409.png" width="900px">
+<img src="/images/grpc_http2_server.png" width="900px">
 
 #### Client Streaming RPC
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0410.png" width="900px">
+<img src="/images/grpc_http2_client.png" width="900px">
 
 #### Bidirectional Streaming RPC
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0411.png" width="900px">
+<img src="/images/grpc_http2_bid.png" width="900px">
 
 ---
 
 ## Architecture
 
-<img src="https://www.oreilly.com/library/view/grpc-up-and/9781492058328/assets/grpc_0412.png" width="600px">
+<img src="/images/grpc_core.png" width="600px">
 
 - Application Layer
   - Application Logic

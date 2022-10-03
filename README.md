@@ -1,5 +1,51 @@
 # gRPC
 
+<img src="/images/grpc.png" style="max-width: 700px;">
+
+## [Documentation](docs/README.md)
+
+- [Install](install.md) gRPC
+- gRPC
+- Helloworld
+- Product Info Servicemd)
+  - Create go modules: server, client
+  - Write and compile a protobuf for go interface
+  - Build and run server and client
+- gRPC patterns
+  - Unary RPC
+  - Server streaming RPC
+  - Client streaming RPC
+  - Bidirectional streaming RPC
+- Basic
+  - RPC
+  - Message Encoding
+  - Length-Prefix Message Framing
+  - HTTP/2
+  - gRPC Layer
+- Advanced
+  - Interceptors
+    - server/client 
+    - unary/stream interceptor
+  - Deadline
+  - Cancellation
+  - Error Handling
+  - Multiplexing
+  - Metadata
+  - Load Balancing, Name Resolve
+  - Compression
+- Secure
+  - basic authentication
+  - mTLS
+  - OAuth 2.0
+- Production
+- Ecosystem
+  - microservices architecture
+
+---
+## Ref
+
+### gRPC
+
 - [gRPC](https://grpc.io/)
   - [documentation](https://grpc.io/docs/)
   - [introduction](https://grpc.io/docs/what-is-grpc/introduction/)
@@ -10,105 +56,14 @@
 - github: [grpc/grpc-go](https://github.com/grpc/grpc-go)
 - protocol buffers: [google doc](https://developers.google.com/protocol-buffers)
 
-## Ref
+### Book
 
 - book: [gRPC - Up and Running](https://grpc-up-and-running.github.io/)
   - [github](https://github.com/grpc-up-and-running)
     - [content](https://github.com/grpc-up-and-running/grpc-up-and-running.github.io)
     - [samples](https://github.com/grpc-up-and-running/samples)
   - oreilly: [ch01](https://www.oreilly.com/library/view/grpc-up-and/9781492058328/ch01.html)
+
+### Documentation
+
 - Microsoft: [gRPC](https://docs.microsoft.com/en-us/dotnet/architecture/cloud-native/grpc)
-
----
-
-Read [Documentation](docs/README.md)
-
----
-
-## Install
-
-### Protobuf
-
-- vscode plugins
-  - [vscode-proto3](https://marketplace.visualstudio.com/items?itemName=zxh404.vscode-proto3)
-  - [clang-format](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
-
-```bash
-brew install clang-format
-```
-
-### Go
-
-- Go
-  - [gvm](https://github.com/moovweb/gvm)
-- Protocol buffer 3+
-  - [install](https://grpc.io/docs/protoc-installation/)
-  
-#### Install Protoc
-
-##### MacPort
-
-```bash
-sudo port install protobuf3-cpp
-```
-
-##### HomeBrew
-
-```bash
-brew install protobuf
-```
-
-##### Manually
-
-- [protocolbuffers/protobuf](https://github.com/protocolbuffers/protobuf)
-   - [release](https://github.com/protocolbuffers/protobuf/releases/latest)
-
-Download pre-built binary: `protoc-XX.X-osx-x86_64.zip`
-
-```bash
-sudo mv protoc-XX/ /usr/local
-sudo cp -R protoc-XX/include /usr/local/include
-sudo chmod u+x /usr/local/protoc-XX/bin/protoc
-sudo xattr -d com.apple.quarantine /usr/local/protoc-XX/bin/protoc
-```
-
-Add `PATH` in `.zprofile`:
-
-```bash
-### Protobuf
-export PATH="$PATH:/usr/local/protoc-XX/bin"
-```
-
-#### Version
-
-```bash
-go version # go version go1.18 darwin/amd64
-protoc --version # libprotoc 3.21.2
-```
-
-### Go plugins for the protocol compiler
-
-- [protocolbuffers/protobuf-go/cmd/protoc-gen-go](https://github.com/protocolbuffers/protobuf-go/tree/master/cmd/protoc-gen-go)
-- [grpc/grpc-go/cmd/protoc-gen-go-grpc](https://github.com/grpc/grpc-go/tree/master/cmd/protoc-gen-go-grpc)
-
-```bash
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-```
-
-```bash
-export PATH="$PATH:$(go env GOPATH)/bin"
-
-echo $PATH | grep -E "$(go env GOPATH)/bin"
-```
-
-### Python
-
-- Python 3.5+
-- pip 9.0.1+
-
-```bash
-pip install --upgrade pip
-pip install grpcio
-pip install grpcio-tools
-```

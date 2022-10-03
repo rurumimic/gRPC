@@ -1,9 +1,6 @@
 # Documentation
 
-<img src="https://www.oreilly.com/api/v2/epubs/9781492058328/files/assets/grpc_0101.png" style="max-width: 700px;">
-
----
-
+- [Install](install.md) gRPC
 - [gRPC](grpc.md)
   - docs: [microsoft](docs.microsoft.md)
   - docs: [aws](docs.aws.md)

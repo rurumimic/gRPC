@@ -7,4 +7,4 @@
 
 - github: [dotnet-architecture/eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)
 
-![](https://docs.microsoft.com/ko-kr/dotnet/architecture/cloud-native/media/grpc-implementation.png)
+![](/images/ms_grpc.png)
