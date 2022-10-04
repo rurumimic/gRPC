@@ -50,7 +50,7 @@ Promote the microservices design philosophy of **coarse-grained message exchange
 
 #### Fine-grained vs Coarse-grained
 
-![fine-coarse](/images/ms_grpc.png)
+![fine-coarse](/images/fine_coarse.png)
 
 #### Fallacies of distributed computing
 
