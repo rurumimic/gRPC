@@ -25,6 +25,12 @@ brew install clang-format
   
 ### Install Protoc
 
+#### Ubuntu
+
+```bash
+sudo apt install -y protobuf-compiler
+```
+
 #### MacPort
 
 ```bash
@@ -92,3 +98,4 @@ pip install --upgrade pip
 pip install grpcio
 pip install grpcio-tools
 ```
+
